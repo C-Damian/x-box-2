@@ -1,3 +1,10 @@
+# x-bot-2
+
+A modular Twitter bot powered by Python, AWS Lambda, and Terraform.  
+
+## Project Structure
+
+```bash
 x-bot-2/
 │
 ├── bot/                    # Core Python bot logic (modular, testable)
@@ -25,4 +32,4 @@ x-bot-2/
 ├── .env.example            # Example env vars for local dev
 ├── README.md
 └── .gitignore
-
+```
