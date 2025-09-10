@@ -8,6 +8,17 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+def parse_json_from_markdown(generated_text: str) -> dict:
+    # First, try to extract JSON from markdown code blocks
+    if "```json" in generated_text:
+        # Extract content between ```json and ```
+        start = generated_text.find("```json") + 7
+        end = generated_text.find("```", start)
+        if end == -1:
+            raise json.JSONDecodeError("No closing markdown block found", "", 0)
+        json_text = generated_text[start:end].strip()
+        return json.loads(json_text)
+
 def generate_tip(category: str) -> dict:
     """
     Generate a tech tip using Gemini API
@@ -51,19 +62,7 @@ def generate_tip(category: str) -> dict:
         
         # Try to parse JSON from the response
         try:
-            # First, try to extract JSON from markdown code blocks
-            if "```json" in generated_text:
-                # Extract content between ```json and ```
-                start = generated_text.find("```json") + 7
-                end = generated_text.find("```", start)
-                if end != -1:
-                    json_text = generated_text[start:end].strip()
-                    tip_data = json.loads(json_text)
-                else:
-                    raise json.JSONDecodeError("No closing markdown block found", "", 0)
-            else:
-                # Try to parse the entire response as JSON
-                tip_data = json.loads(generated_text)
+            tip_data = parse_json_from_markdown(generated_text)
         except json.JSONDecodeError:
             # If not valid JSON, create a simple structure
             tip_data = {
@@ -72,7 +71,7 @@ def generate_tip(category: str) -> dict:
                 "code_example": None,
                 "hashtags": f"#{category.replace(' ', '')} #TechTip"
             }
-        
+
         # Return in the format expected by TipCreate
         return {
             "category": category,

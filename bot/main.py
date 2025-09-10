@@ -2,7 +2,7 @@ import random
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
-from tweet_generator import generate_tip
+from ai_tweet_generator import generate_tip
 from twitter_client import post_tweet
 from mangum import Mangum
 import os
@@ -21,4 +21,18 @@ def todays_category():
   weekday = datetime.now(timezone.utc).weekday() + 1
   return categories.get(weekday, "Python")
 
-print(generate_tip(todays_category()).get("title"))
+def create_tweet_content(category: str) -> str:
+  tip = generate_tip(category)
+  return f"{tip['title']}\n\n{tip['content']}\n\n{tip['code_example']}\n\n{tip['hashtags']}"
+
+category = todays_category()
+tweet_content = create_tweet_content(category)
+
+try:
+  success, tweet_id = post_tweet(tweet_content)
+  if success:
+    print(f"Tweet added to dynamoDB: {tweet_id}")
+  else:
+    print(f"Error posting tweet")
+except Exception as e:
+  print(f"Unexpected error: {str(e)}")
