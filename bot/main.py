@@ -25,9 +25,11 @@ def create_tweet_content(category: str) -> str:
   tip = generate_tip(category)
   return f"{tip['title']}\n\n{tip['content']}\n\n{tip['code_example']}\n\n{tip['hashtags']}"
 
+# Determine today's category and generate the tweet content
 category = todays_category()
 tweet_content = create_tweet_content(category)
 
+# Post the tweet and handle errors
 try:
   success, tweet_id = post_tweet(tweet_content)
   if success:
