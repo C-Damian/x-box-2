@@ -20,6 +20,11 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_dynamo_policy_attach" {
+  role       = aws_iam_role.x_bot_lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+} 
+
 resource "aws_iam_role_policy" "lambda_invoke_all" {
   name = "AdditionalPermissions"
   role = aws_iam_role.x_bot_lambda_role.id
@@ -30,16 +35,34 @@ resource "aws_iam_role_policy" "lambda_invoke_all" {
       {
         Effect = "Allow"
         Action = "lambda:InvokeFunction"
-        Resource = "arn:aws:lambda:us-east-1:YOURARN:function:*"
+        Resource = "arn:aws:lambda:us-east-1:${data.aws_caller_identity.current.account_id}:function:*"
       },
       {
 			"Action": "sqs:sendmessage",
 			"Effect": "Allow",
-			"Resource": "arn:aws:sqs:us-east-1:YOURARN:x_bot_api_test_queue"
+			"Resource": "arn:aws:sqs:us-east-1:${data.aws_caller_identity.current.account_id}:x_bot_api_test_queue"
 		  }
     ]
   })
 }
+
+resource "aws_dynamodb_table" "posted_tips" {
+  name         = "posted_tips"
+  billing_mode = "Provisioned"
+  read_capacity = 1
+  write_capacity = 1
+  hash_key     = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+  tags = {
+    Environment = "dev"
+    Project     = "x-bot"
+  }
+}
+
 
 # Create a ZIP of your code
 # data "archive_file" "lambda_zip" {
