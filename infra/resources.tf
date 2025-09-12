@@ -1,5 +1,5 @@
-resource "aws_iam_role" "lambda_role" {
-  name = "fastapi_lambda_role"
+resource "aws_iam_role" "x_bot_lambda_role" {
+  name = "x_bot_lambda_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -16,13 +16,13 @@ resource "aws_iam_role" "lambda_role" {
 
 # Attach basic Lambda execution policy
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
-  role       = aws_iam_role.lambda_role.name
+  role       = aws_iam_role.x_bot_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "lambda_invoke_all" {
   name = "AdditionalPermissions"
-  role = aws_iam_role.lambda_role.id
+  role = aws_iam_role.x_bot_lambda_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -35,7 +35,7 @@ resource "aws_iam_role_policy" "lambda_invoke_all" {
       {
 			"Action": "sqs:sendmessage",
 			"Effect": "Allow",
-			"Resource": "arn:aws:sqs:us-east-1:YOURARN:fastapi-test-queue"
+			"Resource": "arn:aws:sqs:us-east-1:YOURARN:x_bot_api_test_queue"
 		  }
     ]
   })
@@ -70,7 +70,7 @@ resource "null_resource" "lambda_package" {
     command = <<-EOT
       echo "=== Starting Lambda package build ==="
       pwd
-      rm -f fastapi_lambda.zip
+      rm -f x_bot_lambda.zip
       rm -rf lambda_package
       mkdir -p lambda_package
       cp ../main.py lambda_package/
@@ -78,7 +78,7 @@ resource "null_resource" "lambda_package" {
       echo "=== Installing dependencies for Linux platform ==="
       pip install -r ../lambda_reqs.txt -t lambda_package/ --platform linux_x86_64 --only-binary=:all: --no-cache-dir
       echo "=== Creating zip file ==="
-      cd lambda_package && zip -r ../fastapi_lambda.zip . && cd ..
+      cd lambda_package && zip -r ../x_bot_lambda.zip . && cd ..
       echo "=== Cleaning up ==="
       rm -rf lambda_package
       echo "=== Build complete ==="
@@ -95,10 +95,10 @@ variable "api_key" {
 }
 
 # The actual Lambda function
-resource "aws_lambda_function" "fastapi_lambda" {
+resource "aws_lambda_function" "x_bot_lambda" {
   depends_on = [null_resource.lambda_package] # Ensure package is built first
-  filename = "${path.module}/fastapi_lambda.zip"
-  function_name = "fastapi_cloud_ops"
+  filename = "${path.module}/x_bot_lambda.zip"
+  function_name = "x_bot_lambda"
   role = aws_iam_role.lambda_role.arn
   handler = "main.handler" # Points to our handler in main.py
   runtime = "python3.11"

@@ -38,3 +38,21 @@ try:
     print(f"Error posting tweet")
 except Exception as e:
   print(f"Unexpected error: {str(e)}")
+
+
+# main.py handler for AWS Lambda
+def handler(event, context):
+    print("Lambda triggered")
+    # Post the tweet and handle errors
+    try:
+      success, tweet_id = post_tweet(tweet_content)
+      if success:
+        print(f"Tweet added to dynamoDB: {tweet_id}")
+      else:
+        print(f"Error posting tweet")
+    except Exception as e:
+      print(f"Unexpected error: {str(e)}")
+      return {"statusCode": 200, "body": "Success"}
+
+print(tweet_content)
+print(success)
