@@ -12,7 +12,9 @@ resource "aws_iam_role" "x_bot_lambda_role" {
       }
     ]
   })
-}
+ }
+
+ data "aws_caller_identity" "current" {}
 
 # Attach basic Lambda execution policy
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
@@ -48,7 +50,7 @@ resource "aws_iam_role_policy" "lambda_invoke_all" {
 
 resource "aws_dynamodb_table" "posted_tips" {
   name         = "posted_tips"
-  billing_mode = "Provisioned"
+  billing_mode = "PROVISIONED"
   read_capacity = 1
   write_capacity = 1
   hash_key     = "id"
@@ -122,7 +124,7 @@ resource "aws_lambda_function" "x_bot_lambda" {
   depends_on = [null_resource.lambda_package] # Ensure package is built first
   filename = "${path.module}/x_bot_lambda.zip"
   function_name = "x_bot_lambda"
-  role = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.x_bot_lambda_role.arn
   handler = "main.handler" # Points to our handler in main.py
   runtime = "python3.11"
   timeout = 30
