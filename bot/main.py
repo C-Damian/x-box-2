@@ -31,6 +31,7 @@ def create_tweet_content(category: str) -> str:
 category = todays_category()
 tweet_content = create_tweet_content(category)
 
+'''
 # Post the tweet and handle errors
 try:
   success, tweet_id = post_tweet(tweet_content)
@@ -41,9 +42,8 @@ try:
     print(f"Error posting tweet")
 except Exception as e:
   print(f"Unexpected error: {str(e)}")
-
 '''
-# main.py handler for AWS Lambda
+
 def handler(event, context):
     print("Lambda triggered")
     # Post the tweet and handle errors
@@ -59,3 +59,4 @@ def handler(event, context):
 '''
 print(tweet_content)
 print(success)
+'''

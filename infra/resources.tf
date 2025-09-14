@@ -98,10 +98,10 @@ resource "null_resource" "lambda_package" {
       rm -f x_bot_lambda.zip
       rm -rf lambda_package
       mkdir -p lambda_package
-      cp ../main.py lambda_package/
-      cp ../auth.py lambda_package/
+      cp ../bot/*.py lambda_package/
+      cp ../bot/requirements.txt lambda_package/
       echo "=== Installing dependencies for Linux platform ==="
-      pip install -r ../lambda_reqs.txt -t lambda_package/ --platform linux_x86_64 --only-binary=:all: --no-cache-dir
+      pip install -r ../bot/requirements.txt -t lambda_package/ --platform linux_x86_64 --only-binary=:all: --no-cache-dir
       echo "=== Creating zip file ==="
       cd lambda_package && zip -r ../x_bot_lambda.zip . && cd ..
       echo "=== Cleaning up ==="
@@ -119,6 +119,43 @@ variable "api_key" {
   sensitive   = true
 }
 
+variable "GEMINI_KEY" {
+  description = "Gemini API key"
+  type        = string
+  sensitive   = true
+  
+}
+
+variable "TWITTER_API_KEY" {
+  description = "Twitter API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "TWITTER_API_SECRET" {
+  description = "Twitter API secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "TWITTER_ACCESS_TOKEN" {
+  description = "Twitter access token"
+  type        = string
+  sensitive   = true
+}
+
+variable "TWITTER_ACCESS_TOKEN_SECRET" {
+  description = "Twitter access token secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "TWITTER_BEARER_TOKEN" {
+  description = "Twitter bearer token"
+  type        = string
+  sensitive   = true
+}
+
 # The actual Lambda function
 resource "aws_lambda_function" "x_bot_lambda" {
   depends_on = [null_resource.lambda_package] # Ensure package is built first
@@ -132,7 +169,33 @@ resource "aws_lambda_function" "x_bot_lambda" {
   environment {
     variables = {
       API_KEY = var.api_key # Set from Terraform variable
+      GEMINI_KEY = var.GEMINI_KEY
+      TWITTER_API_KEY = var.TWITTER_API_KEY
+      TWITTER_API_SECRET = var.TWITTER_API_SECRET
+      TWITTER_ACCESS_TOKEN = var.TWITTER_ACCESS_TOKEN
+      TWITTER_ACCESS_TOKEN_SECRET = var.TWITTER_ACCESS_TOKEN_SECRET
+      TWITTER_BEARER_TOKEN = var.TWITTER_BEARER_TOKEN
       ENVIROMENT = "production"
     }
   }
+}
+
+resource "aws_cloudwatch_event_rule" "daily_event" {
+  name                = "daily-event"
+  description         = "Fires at 9:00 CST pm  every day"
+  schedule_expression = "cron(0 2 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "daily_event_target" {
+  rule = aws_cloudwatch_event_rule.daily_event.name
+  target_id = "daily_event"
+  arn = aws_lambda_function.x_bot_lambda.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_daily_event" {
+  statement_id = "AllowExecutionFromCloudWatch"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.x_bot_lambda.function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.daily_event.arn
 }
