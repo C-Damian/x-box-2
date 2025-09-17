@@ -47,7 +47,7 @@ def handler(event, context):
     try:
       success, tweet_id = post_tweet(tweet_content)
       if success:
-        print(f"Tweet added to dynamoDB: {tweet_id}")
+        print(f"Tweet added to dynamoDB!: {tweet_id}")
       else:
         print(f"Error posting tweet")
     except Exception as e:
