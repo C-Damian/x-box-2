@@ -1,12 +1,9 @@
-import random
-from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
 from ai_tweet_generator import generate_tip
 from twitter_client import post_tweet
 from state import add_posted_tip
 from mangum import Mangum
-import os
 
 categories = {
         1: "Python",
