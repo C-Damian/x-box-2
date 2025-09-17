@@ -5,6 +5,18 @@ from datetime import datetime, timezone
 from typing import Optional
 from dotenv import load_dotenv
 
+import boto3
+
+ssm = boto3.client("ssm")
+
+def get_secret(param_name):
+    response = ssm.get_parameter(
+        Name=param_name,
+        WithDecryption=True
+    )
+    return response["Parameter"]["Value"]
+
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -28,7 +40,7 @@ def generate_tip(category: str) -> dict:
     
     headers = {
         'Content-Type': 'application/json',
-        'X-goog-api-key': os.getenv('GEMINI_KEY')
+        'X-goog-api-key': os.getenv('GEMINI_KEY_SSM')
     }
     
     prompt = f"""Generate a practical tech tip about {category} with these specifications:

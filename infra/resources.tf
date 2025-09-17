@@ -48,6 +48,25 @@ resource "aws_iam_role_policy" "lambda_invoke_all" {
   })
 }
 
+resource "aws_iam_role_policy" "lambda_ssm_access" {
+  name = "LambdaSSMAccess"
+  role = aws_iam_role.x_bot_lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "ssm:GetParameter",
+          "ssm:GetParameters"
+        ]
+        Resource = "arn:aws:ssm:us-east-1:${data.aws_caller_identity.current.account_id}:parameter/x_bot/*"
+      }
+    ]
+  })
+}
+
 resource "aws_dynamodb_table" "posted_tips" {
   name         = "posted_tips"
   billing_mode = "PROVISIONED"
@@ -101,7 +120,7 @@ resource "null_resource" "lambda_package" {
       cp ../bot/*.py lambda_package/
       cp ../bot/requirements.txt lambda_package/
       echo "=== Installing dependencies for Linux platform ==="
-      pip install -r ../bot/requirements.txt -t lambda_package/ --platform linux_x86_64 --only-binary=:all: --no-cache-dir
+      pip install -r ../bot/requirements.txt -t lambda_package/ --no-cache-dir
       echo "=== Creating zip file ==="
       cd lambda_package && zip -r ../x_bot_lambda.zip . && cd ..
       echo "=== Cleaning up ==="
@@ -112,49 +131,6 @@ resource "null_resource" "lambda_package" {
   }
 }
 
-# Terraform/variables.tf to help us set env variables for Lambda
-variable "api_key" {
-  description = "API key for authenticated requests"
-  type        = string
-  sensitive   = true
-}
-
-variable "GEMINI_KEY" {
-  description = "Gemini API key"
-  type        = string
-  sensitive   = true
-  
-}
-
-variable "TWITTER_API_KEY" {
-  description = "Twitter API key"
-  type        = string
-  sensitive   = true
-}
-
-variable "TWITTER_API_SECRET" {
-  description = "Twitter API secret"
-  type        = string
-  sensitive   = true
-}
-
-variable "TWITTER_ACCESS_TOKEN" {
-  description = "Twitter access token"
-  type        = string
-  sensitive   = true
-}
-
-variable "TWITTER_ACCESS_TOKEN_SECRET" {
-  description = "Twitter access token secret"
-  type        = string
-  sensitive   = true
-}
-
-variable "TWITTER_BEARER_TOKEN" {
-  description = "Twitter bearer token"
-  type        = string
-  sensitive   = true
-}
 
 # The actual Lambda function
 resource "aws_lambda_function" "x_bot_lambda" {
@@ -168,22 +144,21 @@ resource "aws_lambda_function" "x_bot_lambda" {
 
   environment {
     variables = {
-      API_KEY = var.api_key # Set from Terraform variable
-      GEMINI_KEY = var.GEMINI_KEY
-      TWITTER_API_KEY = var.TWITTER_API_KEY
-      TWITTER_API_SECRET = var.TWITTER_API_SECRET
-      TWITTER_ACCESS_TOKEN = var.TWITTER_ACCESS_TOKEN
-      TWITTER_ACCESS_TOKEN_SECRET = var.TWITTER_ACCESS_TOKEN_SECRET
-      TWITTER_BEARER_TOKEN = var.TWITTER_BEARER_TOKEN
       ENVIROMENT = "production"
+      GEMINI_KEY = "/x_bot/gemini/key"
+      TWITTER_API_KEY = "/x_bot/twitter/api_key"
+      TWITTER_API_SECRET = "/x_bot/twitter/api_secret"
+      TWITTER_ACCESS_TOKEN = "/x_bot/twitter/access_token"
+      TWITTER_ACCESS_TOKEN_SECRET = "/x_bot/twitter/access_token_secret"
+      TWITTER_BEARER_TOKEN = "/x_bot/twitter/bearer_token"
     }
   }
 }
 
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "daily-event"
-  description         = "Fires at 9:00 CST pm  every day"
-  schedule_expression = "cron(0 2 * * ? *)"
+  description         = "Fires at 10:55 CST pm  every day"
+  schedule_expression = "cron(27 4 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "daily_event_target" {
