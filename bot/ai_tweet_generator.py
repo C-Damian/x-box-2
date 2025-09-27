@@ -40,7 +40,7 @@ def generate_tip(category: str) -> dict:
     
     headers = {
         'Content-Type': 'application/json',
-        'X-goog-api-key': os.getenv('GEMINI_KEY')
+        'X-goog-api-key': get_secret(os.getenv('GEMINI_KEY'))
     }
     
     prompt = f"""Generate a practical tech tip about {category} with these specifications:
@@ -108,5 +108,3 @@ def generate_tip(category: str) -> dict:
             "created_at": datetime.now(timezone.utc)
         }
 
-tip = generate_tip("Python")
-print(tip)
