@@ -8,7 +8,7 @@ ssm = boto3.client("ssm")
 
 def get_secret(param_name):
     response = ssm.get_parameter(
-        name=param_name,
+        Name=param_name,
         WithDecryption=True
     )
     return response["Parameter"]["Value"]
@@ -17,11 +17,11 @@ def get_secret(param_name):
 load_dotenv()
 
 client = tweepy.Client(
-    bearer_token=get_secret(os.getenv("TWITTER_BEARER_TOKEN_SSM")),
-    consumer_key=get_secret(os.getenv("TWITTER_API_KEY_SSM")),
-    consumer_secret=get_secret(os.getenv("TWITTER_API_SECRET_SSM")),
-    access_token=get_secret(os.getenv("TWITTER_ACCESS_TOKEN_SSM")),
-    access_token_secret=get_secret(os.getenv("TWITTER_ACCESS_TOKEN_SECRET_SSM"))
+    bearer_token=get_secret(os.getenv("TWITTER_BEARER_TOKEN")),
+    consumer_key=get_secret(os.getenv("TWITTER_API_KEY")),
+    consumer_secret=get_secret(os.getenv("TWITTER_API_SECRET")),
+    access_token=get_secret(os.getenv("TWITTER_ACCESS_TOKEN")),
+    access_token_secret=get_secret(os.getenv("TWITTER_ACCESS_TOKEN_SECRET"))
 )
 
 def post_tweet(tweet_content: str) -> tuple:

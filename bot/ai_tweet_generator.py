@@ -40,7 +40,7 @@ def generate_tip(category: str) -> dict:
     
     headers = {
         'Content-Type': 'application/json',
-        'X-goog-api-key': os.getenv('GEMINI_KEY_SSM')
+        'X-goog-api-key': os.getenv('GEMINI_KEY')
     }
     
     prompt = f"""Generate a practical tech tip about {category} with these specifications:
@@ -97,6 +97,7 @@ def generate_tip(category: str) -> dict:
         
     except Exception as e:
         # Return a fallback tip if API fails
+        print(f"Error generating tip: '{category}': {e}")
         return {
             "category": category,
             "title": f"Tech Tip: {category}",
@@ -107,3 +108,5 @@ def generate_tip(category: str) -> dict:
             "created_at": datetime.now(timezone.utc)
         }
 
+tip = generate_tip("Python")
+print(tip)
