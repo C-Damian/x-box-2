@@ -1,8 +1,6 @@
-# x-bot-2
+## Project Overview
 
-A modular Twitter bot powered by Python, AWS Lambda, and Terraform.  
-
-## Project Structure
+**x-bot-2** is a cloud-native, automated Twitter bot that posts daily, AI-generated tech tips based on a rotating category. The bot leverages Google Gemini for content generation and posts directly to Twitter using the official API. State management is handled via AWS (S3 or DynamoDB), ensuring no repeated tips.
 
 ```bash
 x-bot-2/
@@ -33,3 +31,58 @@ x-bot-2/
 ├── README.md
 └── .gitignore
 ```
+
+
+### Features
+
+- **Daily AI-Generated Tweets:**  
+	Posts practical, developer-focused tips in categories like Python, JavaScript, DevOps, Git, Performance, Security, and APIs.
+
+- **Cloud-Native Automation:**  
+	Runs as an AWS Lambda function, triggered daily by AWS EventBridge (cron scheduler).
+
+- **State Tracking:**  
+	Uses AWS S3 or DynamoDB to track posted tips and prevent repeats.
+
+- **Secure Secrets Management:**  
+	API keys and secrets are managed via environment variables or AWS Secrets Manager.
+
+- **Modular Python Codebase:**  
+	Core logic is organized for easy extension (e.g., new categories, platforms, or a future API/frontend).
+
+### Tech Stack
+
+- **Python 3.x** (core bot logic)
+- **AWS Lambda** (serverless compute)
+- **AWS EventBridge** (scheduled triggers)
+- **AWS S3 / DynamoDB** (state management)
+- **Terraform** (infrastructure as code)
+- **Google Gemini API** (AI content generation)
+- **Twitter API** (tweet posting)
+- **Docker** (local development/testing)
+- **dotenv** (local environment variable management)
+
+### Infrastructure & Deployment
+
+- **Provisioning:**  
+	All AWS resources (Lambda, EventBridge, S3/DynamoDB, IAM roles/policies) are defined and managed using Terraform, located in the `infra/` directory.
+
+- **Deployment:**  
+	Lambda deployment package is built and uploaded via Terraform. Environment variables and secrets are configured in AWS.
+
+- **Local Testing:**  
+	Dockerfile provided for simulating Lambda locally. Unit tests are in the `tests/` directory.
+
+### Next Steps
+
+- **GitHub Actions CI/CD:**  
+	Plan to automate deployment using GitHub Actions. A workflow YAML file will be added to build, test, and deploy the Lambda and Terraform resources on push to `main`.
+
+- **Extensibility:**  
+	The codebase is designed for future expansion, such as adding a FastAPI backend, web UI, or support for additional social platforms.
+# x-bot-2
+
+A modular Twitter bot powered by Python, AWS Lambda, and Terraform.  
+
+## Project Structure
+
