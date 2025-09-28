@@ -157,8 +157,8 @@ resource "aws_lambda_function" "x_bot_lambda" {
 
 resource "aws_cloudwatch_event_rule" "daily_event" {
   name                = "daily-event"
-  description         = "Fires at 10:33 CST pm  every day"
-  schedule_expression = "cron(40 3 * * ? *)"
+  description         = "Fires at 3:30 CST pm  every day"
+  schedule_expression = "cron(30 22 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "daily_event_target" {
