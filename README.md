@@ -95,9 +95,3 @@ x-bot-2/
 
 - **Extensibility:**  
 	The codebase is designed for future expansion, such as adding a FastAPI backend, web UI, or support for additional social platforms.
-# x-bot-2
-
-A modular Twitter bot powered by Python, AWS Lambda, and Terraform.  
-
-## Project Structure
-
