@@ -1,3 +1,18 @@
+## Continuous Integration & Deployment
+
+This project now uses **GitHub Actions** for automated CI/CD. On every push to `main`, the workflow builds, tests, and deploys the AWS infrastructure using Terraform. This setup is ideal for practicing modern DevOps workflows and cloud automation.
+
+### Why I Built This
+
+This is a personal project for hands-on practice with:
+- Python scripting and modular design
+- AWS serverless architecture (Lambda, EventBridge, S3/DynamoDB)
+- Infrastructure as Code with Terraform
+- Secure secrets management
+- Automated deployment pipelines with GitHub Actions
+- AI integration for real-world automation
+
+The goal is to learn by doing, experiment with best practices, and build a foundation for future, more complex cloud-native apps.
 ## Project Overview
 
 **x-bot-2** is a cloud-native, automated Twitter bot that posts daily, AI-generated tech tips based on a rotating category. The bot leverages Google Gemini for content generation and posts directly to Twitter using the official API. State management is handled via AWS (S3 or DynamoDB), ensuring no repeated tips.
