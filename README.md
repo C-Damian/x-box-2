@@ -1,6 +1,6 @@
 ## Project Overview
 
-**x-bot-2** is a cloud-native, automated Twitter bot that posts daily, AI-generated tech tips based on a rotating category. The bot leverages Google Gemini for content generation and posts directly to Twitter using the official API. State management is handled via AWS (S3 or DynamoDB), ensuring no repeated tips.
+**X-Bot** is a cloud-native, automated Twitter bot that posts daily, AI-generated tech tips based on a rotating category. The bot leverages Google Gemini for content generation and posts directly to Twitter using the official API. State management is handled via AWS (S3 or DynamoDB), ensuring no repeated tips.
 
 ### Why I Built This
 
@@ -39,7 +39,6 @@ x-bot-2/
 │   ├── iam.tf
 │   └── variables.tf
 │
-├── Dockerfile              # For local testing (optional)
 ├── requirements.txt        # Python dependencies
 ├── .env.example            # Example env vars for local dev
 ├── README.md
@@ -73,8 +72,6 @@ x-bot-2/
 - **Terraform** (infrastructure as code)
 - **Google Gemini API** (AI content generation)
 - **Twitter API** (tweet posting)
-- **Docker** (local development/testing)
-- **dotenv** (local environment variable management)
 
 ### Infrastructure & Deployment
 
@@ -85,12 +82,9 @@ x-bot-2/
 	Lambda deployment package is built and uploaded via Terraform. Environment variables and secrets are configured in AWS.
 
 - **Local Testing:**  
-	Dockerfile provided for simulating Lambda locally. Unit tests are in the `tests/` directory.
+	Dockerfile will be provided for simulating Lambda locally. Unit tests will be in the `tests/` directory.
 
 ### Next Steps
-
-- **GitHub Actions CI/CD:**  
-	Plan to automate deployment using GitHub Actions. A workflow YAML file will be added to build, test, and deploy the Lambda and Terraform resources on push to `main`.
 
 - **Extensibility:**  
 	The codebase is designed for future expansion, such as adding a FastAPI backend, web UI, or support for additional social platforms.
