@@ -25,9 +25,8 @@ x-bot-2/
 │   ├── main.py             # Lambda entrypoint
 │   ├── categories.py       # Category logic
 │   ├── tweet_generator.py  # AI/template tweet generation
-│   ├── twitter_client.py   # Twitter API integration
-│   ├── state.py            # S3/DynamoDB state tracking
-│   └── config.py           # Env var/secrets loading
+│   ├── twitter_client.py   # Twitter API integration 
+│   └── state.py            # S3/DynamoDB state tracking
 │
 ├── tests/                  # Unit/integration tests
 │   └── test_main.py
