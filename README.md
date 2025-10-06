@@ -23,7 +23,6 @@ x-bot-2/
 ├── bot/                    # Core Python bot logic (modular, testable)
 │   ├── __init__.py
 │   ├── main.py             # Lambda entrypoint
-│   ├── categories.py       # Category logic
 │   ├── tweet_generator.py  # AI/template tweet generation
 │   ├── twitter_client.py   # Twitter API integration 
 │   └── state.py            # S3/DynamoDB state tracking
